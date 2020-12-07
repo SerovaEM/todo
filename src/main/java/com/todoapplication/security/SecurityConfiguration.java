@@ -22,7 +22,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/login", "/h2-console/**").permitAll()
-                .antMatchers("/registration").not().fullyAuthenticated().and()
+                .antMatchers("/registration").not().fullyAuthenticated()
+                .antMatchers("/list-todos","/add-todo","/delete-todo","/update-todo").fullyAuthenticated().and()
                 .formLogin().loginPage("/login")                    //Перенарпавление на главную страницу после успешного входа
                 .defaultSuccessUrl("/home")
                 .permitAll();

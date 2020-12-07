@@ -35,10 +35,10 @@ public class TodoController {
 	}
 
 	@RequestMapping(value = "/list-todos", method = RequestMethod.GET)
-	public String showTodos(ModelMap model) {
+	public String showTodos(ModelMap model, @RequestParam(required = false) String sortByState) {
 		String name = getLoggedInUserName(model);
-		model.put("todos", todoDao.getTodosByUser(name));
-		// model.put("todos", service.retrieveTodos(name));
+		model.put("sortByState",sortByState);
+		model.put("todos", todoDao.getTodosByUser(name,sortByState));
 		return "list-todos";
 	}
 
@@ -68,18 +68,17 @@ public class TodoController {
 	@RequestMapping(value = "/update-todo", method = RequestMethod.GET)
 	public String showUpdateTodoPage(@RequestParam long id, ModelMap model) {
 		Todo todo = todoDao.getTodoById(id).get();
+		String name = getLoggedInUserName(model);
+		if(!name.equals(todo.getUserName())) return "accessDenied";
 		model.put("todo", todo);
 		return "todo";
 	}
 
 	@RequestMapping(value = "/update-todo", method = RequestMethod.POST)
 	public String updateTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
-
 		if (result.hasErrors()) {
 			return "todo";
 		}
-
-		todo.setUserName(getLoggedInUserName(model));
 		todoDao.updateTodo(todo);
 		return "redirect:/list-todos";
 	}

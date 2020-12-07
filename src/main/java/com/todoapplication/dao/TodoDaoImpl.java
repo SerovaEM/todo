@@ -23,6 +23,17 @@ public class TodoDaoImpl implements TodoDao {
 	}
 
 	@Override
+	public List<Todo> getTodosByUser(String user, String sortByState) {
+		List<Todo> todoList;
+		if (sortByState != null && sortByState.equals("desc")) {
+			todoList = todoRepository.findByUserName(user, Sort.by(Sort.Direction.DESC, "isTaskDone"));
+		} else {
+			todoList = todoRepository.findByUserName(user, Sort.by(Sort.Direction.ASC, "isTaskDone"));
+		}
+		return todoList;
+	}
+
+	@Override
 	public Optional<Todo> getTodoById(long id) {
 		return todoRepository.findById(id);
 	}

@@ -11,6 +11,8 @@ public interface TodoDao {
 
 	List<Todo> getTodosByUser(String user);
 
+	List<Todo> getTodosByUser(String user, String sortByState);
+
 	Optional<Todo> getTodoById(long id);
 
 	void updateTodo(Todo todo);

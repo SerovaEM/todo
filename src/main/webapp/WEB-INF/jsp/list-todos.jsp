@@ -18,7 +18,8 @@
 							<span class="glyphicon glyphicon-sort-by-attributes" id="sortByDescription"/>
 						</th>
 						<th width="30%">Target Date</th>
-						<th width="20%">Done
+						<th width="20%">Done ${sortByState}
+							<span class="glyphicon glyphicon-sort ${sortByState}" id="sortByState"/>
 						</th>
 						<th width="20%"></th>
 					</tr>
@@ -26,7 +27,7 @@
 				<tbody id="list-todo-body">
 					<c:forEach items="${todos}" var="todo">
 						<tr <c:if
-							test="${todo.taskDone}"> class="text-muted" </c:if> id="${todo.id}tr" >
+							test="${todo.taskDone}"> class="text-muted" </c:if> id="todoTr ${todo.id}tr" >
 							<td title="${todo.comment}">${todo.description}</td>
 							<td><fmt:formatDate value="${todo.targetDate}"
 									pattern="dd/MM/yyyy" /></td>
@@ -36,8 +37,7 @@
 							</td>
 							<td><a type="button" class="btn btn-success"
 								href="/update-todo?id=${todo.id}">Update</a>
-							<a type="button" class="btn btn-warning"
-								href="/delete-todo?id=${todo.id}">Delete</a></td>
+							<span type="button" class="btn btn-warning" id="${todo.id}Delete">Delete</span></td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -48,6 +48,15 @@
 </div>
 <%@ include file="common/footer.jsp"%>
 <script>
+	$(".btn-warning").click(function (){
+		var id = (this.id).replace("Delete","");
+		$.ajax({
+			url: "delete-todo?id=" + id,
+			success: function (html) {
+				location.reload();
+			}
+		})
+	})
 	$(document).ready(function () {
 		$('#sortByDescription').click(function () {
 			var table = $('#list-todo');
@@ -76,5 +85,19 @@
 					}
 				})
 			});
+
+		$('#sortByState').click(function () {
+			var sortDirection = ((this.className).indexOf('desc') + 1) ? "desc" : "asc";
+			console.log("1  "+ this.className);
+			if (sortDirection=="desc" || sortDirection==null) sortDirection="asc";
+			if(sortDirection=="asc") sortDirection='desc';
+			console.log(sortDirection);
+			$.ajax({
+				url: "list-todos?sortByState=" + sortDirection,
+				success: function (html) {
+					location.reload();
+				}
+			})
+		});
 	});
 </script>
